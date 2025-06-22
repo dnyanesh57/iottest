@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure Meter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">IoT Meter Server</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/meters">Meters</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/configure_meter">Configure</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>
+                {% if meter_id %}
+                    Edit Meter Configuration
+                {% else %}
+                    Configure New Meter
+                {% endif %}
+            </h1>
+            <a href="/meters" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Meters
+            </a>
+        </div>
+
+        {% if result %}
+        <div class="alert alert-{{ 'success' if result.status == 'success' else 'danger' }} alert-dismissible fade show">
+            {{ result.message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <div class="card shadow">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="meter_id" class="form-label">Meter ID</label>
+                            <input type="text" class="form-control" id="meter_id" name="meter_id" 
+                                value="{{ meter_id }}" required>
+                            <div class="form-text">Unique 12-digit identifier for the device</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sample_interval" class="form-label">Sample Interval (seconds)</label>
+                            <input type="number" class="form-control" id="sample_interval" 
+                                name="sample_interval" min="10" value="30" required>
+                            <div class="form-text">How often to collect measurements (min 10s)</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="ssid" class="form-label">WiFi SSID</label>
+                            <input type="text" class="form-control" id="ssid" name="ssid" required>
+                            <div class="form-text">Network name the device should connect to</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">WiFi Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">Password for the WiFi network</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="server_url" class="form-label">Server URL</label>
+                        <input type="url" class="form-control" id="server_url" name="server_url" 
+                            value="http://35.154.45.218:5000" required>
+                        <div class="form-text">Base URL for data uploads and configuration</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            {% if meter_id %}
+                                Update Configuration
+                            {% else %}
+                                Save Configuration
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if meter_id %}
+        <div class="card mt-4 shadow">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">Advanced Options</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-danger">
+                        <i class="bi bi-arrow-repeat"></i> Force Device Reboot
+                    </button>
+                    <button class="btn btn-outline-warning">
+                        <i class="bi bi-cloud-arrow-up"></i> Push Firmware Update
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">IoT Meter Server &copy; 2023 | Configuration Management</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
